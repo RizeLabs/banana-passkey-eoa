@@ -72,7 +72,7 @@ export class BananaPasskeyEoaSigner extends Signer implements TypedDataSigner {
     return Promise.resolve(eoaAddress);
   }
 
-  //! mainly signMessage is getting user not even sign transaction
+  //! mainly signMessage is getting userOp not even sign transaction
   signTransaction(
     transaction: Deferrable<TransactionRequest>
   ): Promise<string> {
@@ -111,21 +111,23 @@ export class BananaPasskeyEoaSigner extends Signer implements TypedDataSigner {
       types,
       value,
       async (name: string): Promise<any> => {
-        // look into it later
-        // assert(
-        //   this.provider != null,
-        //   "cannot resolve ENS names without a provider",
-        //   "UNSUPPORTED_OPERATION",
-        //   {
-        //     operation: "resolveName",
-        //     info: { name },
-        //   }
-        // );
+
+        if(!this.provider) {
+          return logger.throwError(
+            "cannot resolve ENS names without a provider",
+            Logger.errors.UNSUPPORTED_OPERATION,
+            {
+              operation: "resolveName",
+              info: { name },
+            }
+          );
+        }
 
         const address = await this.provider.resolveName(name);
-        // assert(address != null, "unconfigured ENS name", "UNCONFIGURED_NAME", {
-        //   value: name,
-        // });
+
+        if(!address) {
+          return 'UNCONFIGURED_NAME: unconfigured ENS name';
+        }
 
         return address;
       }
