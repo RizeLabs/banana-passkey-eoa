@@ -1,6 +1,6 @@
 import { constructUniqueIdentifier } from "./utils/constructUserUniqueIdentifier";
 import { BANANA_SERVER, GET_WALLETCRED_ROUTE, IS_WALLETNAME_UNIQUE_ROUTE } from "./constants/routes";
-import { IWebAuthnRegistrationResponse } from "./types/WebAuthnTypes";
+import { IWebAuthnRegistrationResponse, Method } from "./types";
 import Axios from "axios";
 
 export const getPasskeyMeta = async (walletIdentifier: string): Promise<IWebAuthnRegistrationResponse> => {
@@ -12,7 +12,7 @@ export const getPasskeyMeta = async (walletIdentifier: string): Promise<IWebAuth
     
     const walletCredentials = await Axios({
       url: BANANA_SERVER + GET_WALLETCRED_ROUTE,
-      method: "get",
+      method: Method.GET,
       params: {
         uniqueIdentifier: identifier,
       },
@@ -34,7 +34,7 @@ export const isUserNameUnqiue = async (walletName: string) => {
         const identifier = constructUniqueIdentifier(walletName, window.location.hostname);
         const isWalletUnique = await Axios({
             url: BANANA_SERVER + IS_WALLETNAME_UNIQUE_ROUTE,
-            method: 'post',
+            method: Method.POST,
             data: {
                 walletName: identifier
             }
