@@ -3,6 +3,12 @@ import { BANANA_SERVER, GET_WALLETCRED_ROUTE, IS_WALLETNAME_UNIQUE_ROUTE } from 
 import { IWebAuthnRegistrationResponse, Method } from "./types";
 import Axios from "axios";
 
+
+/**
+ * Retrieves passkey metadata for a given wallet identifier.
+ * @param walletIdentifier The wallet identifier.
+ * @returns A Promise that resolves to an IWebAuthnRegistrationResponse object.
+ */
 export const getPasskeyMeta = async (walletIdentifier: string): Promise<IWebAuthnRegistrationResponse> => {
   try {
     const identifier = constructUniqueIdentifier(
@@ -29,6 +35,11 @@ export const getPasskeyMeta = async (walletIdentifier: string): Promise<IWebAuth
   }
 };
 
+/**
+ * Checks if a given wallet name is unique.
+ * @param walletName The wallet name to check for uniqueness.
+ * @returns A boolean indicating whether the wallet name is unique.
+ */
 export const isUserNameUnqiue = async (walletName: string) => {
     try {
         const identifier = constructUniqueIdentifier(walletName, window.location.hostname);

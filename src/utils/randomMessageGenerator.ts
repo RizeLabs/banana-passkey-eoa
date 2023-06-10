@@ -1,3 +1,8 @@
+/**
+ * Generates a random string of the specified length.
+ * @param length The length of the random string.
+ * @returns A randomly generated string.
+ */
 export const generateRandomString = (length: number): string => {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
