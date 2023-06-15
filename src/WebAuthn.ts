@@ -10,6 +10,10 @@ import { IWebAuthnRegistrationResponse, ISignatureResponse, IWebAuthnSignatureRe
 import { EllipticCurve__factory } from "./typechain/factories/EllipticCurve__factory";
 import { JSON_RPC_PROVIDER, ELLIPTIC_CURVE_ADDRESS } from "./constants/index";
 
+/**
+ * Registers a new Passkey by creating a public key credential.
+ * @returns public keys (x,y) co-ordinate and encodedId in a json.
+ */
 export const register = async (): Promise<IWebAuthnRegistrationResponse> => {
   const uuid = uuidv4();
   const chanllenge = uuidv4();
@@ -21,12 +25,12 @@ export const register = async (): Promise<IWebAuthnRegistrationResponse> => {
   const publicKeyParams = {
     challenge: Uint8Array.from(chanllenge, (c) => c.charCodeAt(0)),
     rp: {
-      name: "Banana Smart Wallet",
+      name: "Banana Passkey Signer",
     },
     user: {
       id: Uint8Array.from(uuid, (c) => c.charCodeAt(0)),
-      name: "bananawallet",
-      displayName: "Banana Smart Wallet",
+      name: "passkey-signer",
+      displayName: "Banana SDK",
     },
     pubKeyCredParams: [{ type: "public-key", alg: -7 }],
     authenticatorSelection: {
@@ -82,6 +86,13 @@ export const register = async (): Promise<IWebAuthnRegistrationResponse> => {
   };
 };
 
+/**
+ * Checks the authentication of a user by signing a message with Passkeys and verifying the signature.
+ * @param message - The message to be signed.
+ * @param encodedId - The encoded ID associated with the Passkeys.
+ * @param eoaAddress - Public Key with (x,y) co-ordinates of the point on curve
+ * @returns boolean value indicating whether the signature is valid or not.
+ */
 export const checkAuth = async (
   message: string,
   encodedId: string,
@@ -98,6 +109,13 @@ export const checkAuth = async (
   return resp;
 };
 
+/**
+ * Checks that the signature is valid for the given message and EOA public key.
+ * @param messageSigned text message signed by the user along with the random salt added by webauthn
+ * @param signature signature of the message
+ * @param eoaAddress Public Key with (x,y) co-ordinates of the point on curve
+ * @returns 
+ */
 const verifySignature = async (
   messageSigned: string,
   signature: string,
@@ -115,6 +133,14 @@ const verifySignature = async (
   return isVerified;
 };
 
+
+/**
+ * Signs a text using passkeys 
+ * @param message - text message to be signed
+ * @param encodedId - identifier for passkeys
+ * @param isMessageSignedNeeded - flag indicating if the signed message is needed.
+ * @returns signature and signed message depending on the value of isMessageSignedNeeded .
+ */
 export const signMessageViaPassKeys = async ({
   message,
   encodedId,
