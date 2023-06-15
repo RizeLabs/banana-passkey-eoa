@@ -115,7 +115,6 @@ const verifySignature = async (
   return isVerified;
 };
 
-
 export const signMessageViaPassKeys = async ({
   message,
   encodedId,

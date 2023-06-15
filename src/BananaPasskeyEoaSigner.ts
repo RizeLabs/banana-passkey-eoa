@@ -6,7 +6,7 @@ import { Provider, TransactionRequest } from "@ethersproject/providers";
 import { Deferrable } from "@ethersproject/properties";
 import { Bytes } from "@ethersproject/bytes";
 import { ethers } from "ethers";
-import { IWebAuthnRegistrationResponse } from "./types/WebAuthnTypes";
+import { IWebAuthnRegistrationResponse, Passkey } from "./types";
 import { getPasskeyMeta, isUserNameUnqiue } from "./BananaController";
 import { _TypedDataEncoder } from "ethers/lib/utils";
 import { checkAuth } from "./WebAuthn";
@@ -39,6 +39,7 @@ export class BananaPasskeyEoaSigner extends Signer implements TypedDataSigner {
     this.#publicKey.q0 = webAuthnConnectionResponse.q0;
     this.#publicKey.q1 = webAuthnConnectionResponse.q1;
     this.#publicKey.encodedId = webAuthnConnectionResponse.encodedId;
+    this.#publicKey.username = username;
   }
 
   constructor(provider: Provider, publicKey?: IWebAuthnRegistrationResponse) {
@@ -141,5 +142,14 @@ export class BananaPasskeyEoaSigner extends Signer implements TypedDataSigner {
 
     const { signature } = await signMessageViaPassKeys({ message: hash, encodedId: this.#publicKey.encodedId });
     return signature;
+  }
+
+  static async getPasskey(username: string): Promise<Passkey> {
+    let passKey: Partial<IWebAuthnRegistrationResponse> = await getPasskeyMeta(username);
+    return {
+      publicKeyX: passKey.q0,
+      publicKeyY: passKey.q1,
+      keyId: passKey.encodedId
+    } as Passkey;
   }
 }
