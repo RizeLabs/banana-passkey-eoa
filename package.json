@@ -1,7 +1,7 @@
 {
-  "name": "@rize-labs/banana-passkey-manager",
-  "version": "1.0.1",
-  "description": "Passkey management module by Banana Team",
+  "name": "@rize-labs/paas",
+  "version": "1.0.0",
+  "description": "Passkey management module for all your passkey requirements",
   "main": "dist/index.js",
 
   "scripts": {
